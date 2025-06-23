@@ -1,31 +1,26 @@
-# Fluxion: Cross-Platform Network Acceleration System
+# Fluxion: High-Performance Network Optimization Framework
 
 **Version:** 1.0.0-alpha  
-**Release Date:** 2025-06-23
-**Author:** luxovee 
-**License:** GNU General Public License v3.0  
+**Release Date:** 2023-06-23
+**Author:** luxovee  
+**License:** MIT License  
 
 ---
 
-## Technical Overview
-Fluxion is a high-performance network optimization framework designed to accelerate content delivery through advanced caching mechanisms and protocol optimizations. The system operates as a transparent intermediary between client applications and remote servers, implementing a multi-layer architecture for efficient resource management and traffic processing.
+## Technical Architecture Overview
+Fluxion implements a multi-layer network optimization system operating at the application layer to accelerate content delivery through advanced caching methodologies and protocol enhancements. The framework consists of six primary components that interact through well-defined interfaces.
 
-### Key Technical Components
-1. **Traffic Interception Layer**
+### Core Subsystems:
+1. **Traffic Interception Module**
 2. **Protocol Analysis Engine**
-3. **Hierarchical Caching System**
-4. **TLS Termination and Re-encryption**
-5. **Cross-Platform Integration Module**
+3. **Hierarchical Cache Management**
+4. **TLS Termination Handler**
+5. **Platform Abstraction Layer**
 6. **Performance Monitoring Framework**
 
----
-
-## Architectural Specifications
-
-### System Architecture
 ```mermaid
-graph LR
-    A[Network Interface] --> B(Traffic Capture)
+graph TD
+    A[Network Interface] --> B(Packet Capture)
     B --> C{Protocol Classification}
     C -->|HTTP/1.1| D[HTTP Parser]
     C -->|HTTP/2| E[HTTP/2 Frame Processor]
@@ -40,119 +35,95 @@ graph LR
     K --> L[Monitoring API]
 ```
 
-### Component Interaction Sequence
-```mermaid
-sequenceDiagram
-    participant Client as Client Application
-    participant Fluxion as Fluxion Core
-    participant Cache as Cache Engine
-    participant Remote as Remote Server
-    
-    Client->>Fluxion: TCP SYN (Request Initiation)
-    Fluxion->>Client: TCP SYN-ACK (Acknowledgment)
-    Client->>Fluxion: HTTP/HTTPS Request
-    alt Resource Cached
-        Fluxion->>Cache: Cache Lookup
-        Cache-->>Fluxion: Resource Metadata
-        Fluxion->>Cache: Content Retrieval
-        Cache-->>Fluxion: Resource Payload
-        Fluxion->>Client: HTTP Response
-    else Resource Not Cached
-        Fluxion->>Remote: Forward Request
-        Remote-->>Fluxion: HTTP Response
-        Fluxion->>Cache: Store Resource
-        Fluxion->>Client: Forward Response
-    end
-```
-
 ---
 
-## Build Requirements
+## Build Specifications
 
-### Core Dependencies
-| Component | Minimum Version | Recommended Version | Installation Command |
-|-----------|-----------------|---------------------|----------------------|
-| Rust Toolchain | 1.68.0 | 1.75.0 | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh` |
-| LLVM/Clang | 13.0.0 | 16.0.0 | `sudo apt install clang llvm` |
-| OpenSSL | 1.1.1 | 3.0.9 | `sudo apt install libssl-dev` |
-| SQLite3 | 3.35.0 | 3.42.0 | `sudo apt install libsqlite3-dev` |
-| pkg-config | 0.29.2 | 0.29.2 | `sudo apt install pkg-config` |
+### Prerequisite Toolchain
+| Component | Version | Verification Command |
+|-----------|---------|----------------------|
+| Rust Toolchain | 1.75+ | `rustc --version` |
+| LLVM/Clang | 16.0+ | `clang --version` |
+| Cargo | 1.75+ | `cargo --version` |
+| SQLite3 | 3.42+ | `sqlite3 --version` |
+| OpenSSL | 3.0+ | `openssl version` |
 
 ### Platform-Specific Dependencies
-**Windows:**
-- Microsoft Visual C++ Build Tools 2022
-- Windows 10 SDK (10.0.19041.0)
-- WinDivert 2.2.0
-
 **Linux:**
-- libnetfilter-queue-dev 1.0.5
-- libnfnetlink-dev 1.0.1
-- libcap-ng-dev 0.8.3
+```bash
+sudo apt install libnetfilter-queue-dev libnfnetlink-dev libcap-ng-dev libpcre3-dev
+```
+
+**Windows:**
+1. Install Visual Studio Build Tools 2022
+2. Download WinDivert 2.2.0 (https://www.reqrypt.org/windivert.html)
+3. Set environment variable: `WIN_DIVERT_PATH=C:\Path\To\WinDivert`
 
 **macOS:**
-- Xcode Command Line Tools 14.3
-- libpcap 1.10.3
-
-**Android:**
-- Android NDK r25c
-- Android SDK Platform 33
+```bash
+brew install openssl pkg-config libpcap
+export PKG_CONFIG_PATH="/usr/local/opt/openssl@3/lib/pkgconfig"
+```
 
 ---
 
-## Compilation and Installation
+## Compilation Process
 
-### Core Engine Compilation
+### Core System Build
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/fluxion.git
+# Clone repository with submodules
+git clone --recurse-submodules https://github.com/yourusername/fluxion.git
 cd fluxion/core
 
-# Set build parameters
+# Configure build environment
 export RUSTFLAGS="-C target-cpu=native -C link-arg=-fuse-ld=lld"
-export CARGO_PROFILE_RELEASE_LTO=true
+export CARGO_PROFILE_RELEASE_LTO=thin
 export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1
 
-# Build optimized release
-cargo build --release --features "full_optimization tls_v1_3"
+# Build optimized binary
+cargo build --release --features "tls_v1_3,advanced_caching"
 
-# Verify binary
-strip target/release/fluxion
-objdump -D target/release/fluxion | less
+# Strip debug symbols
+strip -s target/release/fluxion
+
+# Verify binary dependencies
+ldd target/release/fluxion  # Linux
+dumpbin /DEPENDENTS target/release/fluxion.exe  # Windows
 ```
 
-### Platform-Specific Build Instructions
+### Platform Integration
 
-**Linux (Advanced Network Configuration):**
+**Linux Network Configuration:**
 ```bash
-# Configure network namespace
+# Create network namespace
 sudo ip netns add fluxion-ns
+
+# Configure virtual interface
 sudo ip link add veth0 type veth peer name veth1
 sudo ip link set veth1 netns fluxion-ns
+sudo ip netns exec fluxion-ns ip addr add 192.168.100.1/24 dev veth1
+sudo ip netns exec fluxion-ns ip link set veth1 up
 
-# Build with netfilter support
-cargo build --release --features "linux_netfilter"
-
-# Load kernel module
+# Load kernel modules
 sudo modprobe nfnetlink_queue
+sudo modprobe nf_conntrack
 ```
 
-**Windows (WinDivert Integration):**
-1. Download WinDivert 2.2.0 from https://www.reqrypt.org/windivert.html
-2. Extract to `C:\Program Files\WinDivert`
-3. Set environment variable:
+**Windows Integration:**
 ```powershell
-$env:WIN_DIVERT_PATH = "C:\Program Files\WinDivert"
-```
-4. Build with:
-```powershell
-cargo build --release --features "windows_windivert"
+# Register WinDivert driver
+sc.exe create WinDivert type= kernel start= auto binPath= "C:\Path\To\WinDivert\WinDivert.sys"
+sc.exe start WinDivert
+
+# Configure firewall rule
+New-NetFirewallRule -DisplayName "Fluxion" -Direction Inbound -Action Allow -Program "C:\Path\To\fluxion.exe"
 ```
 
 ---
 
 ## Configuration Reference
 
-### Configuration File Structure (`/etc/fluxion/config.toml`)
+### Configuration File Syntax (`/etc/fluxion/config.toml`)
 ```toml
 [network]
 listen_address = "0.0.0.0"
@@ -182,32 +153,22 @@ thread_pool_size = 8
 memory_pool_size = "512MiB"
 io_uring_enabled = true # Linux only
 batch_processing_size = 64
-
-[security]
-strict_transport_security = true
-certificate_pinning = true
-forbidden_resources = ["/malware.exe", "/exploit.kit"]
-
-[logging]
-level = "info" # options: trace, debug, info, warn, error
-destination = "syslog" # options: stdout, file, syslog
-rotation = "daily" # options: hourly, daily, weekly
 ```
 
-### Environment Variable Overrides
-| Variable | Format | Example | Description |
-|----------|--------|---------|-------------|
-| `FLX_NETWORK_PORT` | integer | `8080` | Listening port |
-| `FLX_CACHE_BACKEND` | string | `rocksdb` | Cache storage backend |
-| `FLX_TLS_VERSION` | string | `1.3` | Minimum TLS version |
-| `FLX_LOG_LEVEL` | string | `debug` | Logging verbosity |
-| `FLX_MEM_POOL` | size string | `1GiB` | Memory pool size |
+### Environment Variable Configuration
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `FLX_NETWORK_PORT` | 8080 | Listening port |
+| `FLX_CACHE_BACKEND` | sqlite | Cache storage backend |
+| `FLX_TLS_VERSION` | 1.3 | Minimum TLS version |
+| `FLX_LOG_LEVEL` | info | Logging verbosity |
+| `FLX_MEM_POOL` | 512MiB | Memory pool size |
 
 ---
 
-## Cache System Implementation
+## Cache Architecture
 
-### Storage Architecture
+### Storage Hierarchy
 ```
 /cache_root
 ├── metadata.db       # SQLite database
@@ -252,14 +213,14 @@ CREATE INDEX idx_expiration ON resources (expiration);
 
 ## Security Implementation
 
-### Certificate Management Workflow
+### Certificate Management
 1. **Root CA Generation** (ECDSA P-384)
    ```bash
    openssl ecparam -genkey -name secp384r1 -out root.key
    openssl req -x509 -new -nodes -key root.key -sha384 -days 3650 -out root.crt \
      -subj "/CN=Fluxion Root CA/O=Fluxion Project"
    ```
-2. **Leaf Certificate Generation** (On-demand)
+2. **Leaf Certificate Generation**
    ```rust
    fn generate_cert(domain: &str) -> (X509, PKey<Private>) {
        let pkey = PKey::ec_gen("prime256v1")?;
@@ -277,26 +238,25 @@ CREATE INDEX idx_expiration ON resources (expiration);
    ```
 
 ### Security Measures
-1. **Certificate Pinning**
-   - Preloaded HSTS policies
-   - HPKP (HTTP Public Key Pinning) emulation
-2. **Key Protection**
-   - Windows: CNG key storage
-   - Linux: Kernel key retention service
-   - macOS: Secure Enclave protection
-3. **Memory Security**
-   - Zeroization of sensitive data
+1. **Memory Protection**
+   - Sensitive data zeroization
    - Guard pages around cryptographic material
    - ASLR and PIE enforcement
+2. **Key Management**
+   - Platform-specific secure storage
+   - Hardware-backed encryption (when available)
+3. **Access Controls**
+   - Filesystem permission hardening
+   - Namespace isolation (Linux)
+   - Mandatory integrity controls (Windows)
 
 ---
 
-## Performance Tuning
+## Performance Optimization
 
-### Kernel Parameters Optimization
-**Linux:**
+### Linux Kernel Tuning
 ```bash
-# Network stack tuning
+# Network stack optimization
 sudo sysctl -w net.core.rmem_max=16777216
 sudo sysctl -w net.core.wmem_max=16777216
 sudo sysctl -w net.ipv4.tcp_rmem="4096 87380 16777216"
@@ -309,35 +269,21 @@ sudo sysctl -w vm.dirty_ratio=10
 sudo sysctl -w vm.dirty_background_ratio=5
 ```
 
-**Windows:**
-```powershell
-Set-NetTCPSetting -SettingName InternetCustom -InitialCongestionWindow 10
-Set-NetTCPSetting -SettingName InternetCustom -CongestionProvider DCTCP
-Set-NetOffloadGlobalSetting -Chimney Disabled
+### SQLite Performance Tuning
+```sql
+PRAGMA journal_mode = WAL;
+PRAGMA synchronous = NORMAL;
+PRAGMA cache_size = -10000;  -- 10MB cache
+PRAGMA mmap_size = 268435456; -- 256MB mmap
+PRAGMA temp_store = MEMORY;
+PRAGMA busy_timeout = 5000;
 ```
-
-### Cache-Specific Tuning
-1. **SQLite Optimization**
-   ```sql
-   PRAGMA journal_mode = WAL;
-   PRAGMA synchronous = NORMAL;
-   PRAGMA cache_size = -10000;  -- 10MB cache
-   PRAGMA mmap_size = 268435456; -- 256MB mmap
-   ```
-2. **Compression Ratios**
-   | Algorithm | Level | Compression Ratio | Throughput (MB/s) |
-   |-----------|-------|-------------------|-------------------|
-   | zstd      | 1     | 2.8:1             | 530               |
-   | zstd      | 3     | 3.2:1             | 470               |
-   | zstd      | 6     | 3.7:1             | 310               |
-   | zlib      | 6     | 2.9:1             | 120               |
-   | lz4       | N/A   | 2.1:1             | 740               |
 
 ---
 
-## Metrics and Monitoring
+## Metrics Collection
 
-### Prometheus Metrics Endpoint
+### Prometheus Endpoint Metrics
 `GET /metrics` returns:
 ```
 # TYPE fluxion_cache_requests counter
@@ -362,8 +308,8 @@ fluxion_processing_time_count 12784
 ```
 
 ### Performance Counters
-| Metric | Sampling Interval | Description |
-|--------|-------------------|-------------|
+| Metric | Collection Interval | Description |
+|--------|---------------------|-------------|
 | `cache.hit_rate` | 5s | Cache hit percentage |
 | `memory.working_set` | 1s | Resident memory usage |
 | `network.throughput` | 1s | Bytes processed/sec |
@@ -372,107 +318,71 @@ fluxion_processing_time_count 12784
 
 ---
 
-## Development Roadmap
+## Development Workflow
 
-### Version 1.0
-- [x] HTTP/1.1 protocol support
-- [x] TLS 1.2/1.3 termination
-- [x] SQLite caching backend
-- [x] Windows/Linux support
-- [x] Basic metrics collection
-
-### Version 1.5
-- [ ] HTTP/2 multiplexing support
-- [ ] QUIC protocol implementation
-- [ ] RocksDB caching backend
-- [ ] macOS/Android support
-- [ ] Distributed cache synchronization
-
-### Version 2.0
-- [ ] Adaptive video streaming optimization
-- [ ] Machine learning-based prefetching
-- [ ] Hardware acceleration support
-- [ ] Browser extension integration
-- [ ] Cross-device synchronization
-
----
-
-## Security Advisory
-Fluxion implements comprehensive security measures, but users should be aware of inherent risks:
-
-1. **MITM Risks**
-   - System trusts Fluxion's root CA certificate
-   - Potential decryption of all HTTPS traffic
-   - Certificate transparency logs recommended
-
-2. **Resource Isolation**
-   - Cache partition per user context
-   - Strict filesystem permissions
-   - SELinux/AppArmor profiles included
-
-3. **Vulnerability Reporting**
-   - Security issues: security@fluxion-project.org
-   - PGP key: 0x1A2B3C4D5E6F7890
-   - Response SLA: 72 hours
-
-**Important:** Always verify SHA-256 checksum of binaries before installation:
-```
-fluxion-linux-x86_64: 7d3a9e5f8b1c4d6e2f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f
-fluxion-windows-amd64: 9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b
+### Branching Strategy
+```mermaid
+gitGraph
+    commit
+    branch feature/optimization
+    checkout main
+    commit
+    checkout feature/optimization
+    commit
+    commit
+    checkout main
+    merge feature/optimization
+    branch release/1.0
+    commit
+    checkout main
+    commit
 ```
 
----
-
-## Contributing Guidelines
-Fluxion follows rigorous development standards:
-
-1. **Code Quality**
-   - Zero `unsafe` blocks in Rust code
-   - 100% test coverage for critical modules
-   - Clippy linter with pedantic settings
-   ```toml
-   [dependencies]
-   clippy = { version = "0.1.71", features = ["pedantic"] }
+### Code Quality Standards
+1. **Static Analysis**
+   ```bash
+   cargo clippy --all-targets -- -D warnings
+   cargo audit
    ```
-
-2. **Development Process**
-   ```mermaid
-   graph TB
-       A[Feature Branch] --> B[Static Analysis]
-       B --> C[Unit Testing]
-       C --> D[Integration Testing]
-       D --> E[Code Review]
-       E --> F[Merge to Main]
-       F --> G[Release Candidate]
-       G --> H[Staging Deployment]
-       H --> I[Production Release]
+2. **Testing Requirements**
+   ```bash
+   cargo test --all-features
+   cargo tarpaulin --ignore-tests --out Lcov
    ```
-
-3. **Testing Requirements**
-   - Unit tests for all public APIs
-   - Integration tests with real traffic captures
-   - Fuzz testing for protocol parsers
-   - Performance regression testing
+3. **Documentation**
+   ```bash
+   cargo doc --no-deps --document-private-items
+   cargo deadlinks
+   ```
 
 ---
 
 ## License Information
-Fluxion is licensed under the GNU General Public License version 3.0. The complete license text is available in the LICENSE file.
+Copyright © 2025 luxovee
 
-### Third-Party Licenses
-| Component | License | Version |
-|-----------|---------|---------|
-| OpenSSL | Apache 2.0 | 3.0.9 |
-| SQLite | Public Domain | 3.42.0 |
-| Hyper | MIT | 0.14.26 |
-| Tokio | MIT | 1.29.1 |
-| WinDivert | LGPLv3 | 2.2.0 |
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 ---
 
 ## Technical References
-1. IETF RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3
-2. IETF RFC 7540: Hypertext Transfer Protocol Version 2 (HTTP/2)
-3. SQLite Optimization Guidelines (https://sqlite.org/optoverview.html)
-4. Linux Netfilter Queue Programming (https://netfilter.org/projects/libnetfilter_queue)
-5. Windows Filtering Platform Architecture (https://learn.microsoft.com/en-us/windows/win32/fwp)
+1. IETF RFC 8446: TLS Protocol Version 1.3
+2. IETF RFC 7540: HTTP/2 Specification
+3. SQLite Optimization Guidelines: https://sqlite.org/optoverview.html
+4. Linux Netfilter Programming: https://netfilter.org/projects/libnetfilter_queue
+5. Windows Filtering Platform: https://learn.microsoft.com/en-us/windows/win32/fwp
