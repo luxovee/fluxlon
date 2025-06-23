@@ -1,8 +1,8 @@
 # Fluxion: Cross-Platform Network Acceleration System
 
 **Version:** 1.0.0-alpha  
-**Release Date:** 2023-10-15  
-**Author:** [Your Name]  
+**Release Date:** 2025-06-23
+**Author:** luxovee 
 **License:** GNU General Public License v3.0  
 
 ---
@@ -476,15 +476,3 @@ Fluxion is licensed under the GNU General Public License version 3.0. The comple
 3. SQLite Optimization Guidelines (https://sqlite.org/optoverview.html)
 4. Linux Netfilter Queue Programming (https://netfilter.org/projects/libnetfilter_queue)
 5. Windows Filtering Platform Architecture (https://learn.microsoft.com/en-us/windows/win32/fwp)
-
----
-
-## Contact Information
-**Project Maintainer:** [Your Name]  
-**Technical Support:** support@fluxion-project.org  
-**Security Issues:** security@fluxion-project.org  
-**PGP Key:** 0x1A2B3C4D5E6F7890  
-
-**Repository:** https://github.com/yourusername/fluxion  
-**Documentation:** https://fluxion-project.org/docs  
-**Issue Tracker:** https://github.com/yourusername/fluxion/issues
