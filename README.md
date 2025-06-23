@@ -1,7 +1,7 @@
 # Fluxion: High-Performance Network Optimization Framework
 
 **Version:** 1.0.0-alpha  
-**Release Date:** 2023-06-23
+**Release Date:** 2023-06-23  
 **Author:** luxovee  
 **License:** MIT License  
 
