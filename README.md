@@ -197,7 +197,7 @@ flutter analyze
 ```
 
 ## License
-Copyright © 2023 [Your Name]. Fluxion is licensed under the **GNU General Public License v3.0**.  
+Copyright © 2025 luxovee. Fluxion is licensed under the **GNU General Public License v3.0**.  
 Complete license text available in [LICENSE](LICENSE).
 
 ## References and Inspiration
